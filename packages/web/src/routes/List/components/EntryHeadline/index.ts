@@ -1,0 +1,1 @@
+export { EntryHeadline } from "./EntryHeadline";

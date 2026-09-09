@@ -1,0 +1,14 @@
+{
+  "name": "diary",
+  "private": true,
+  "packageManager": "pnpm@11.20.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "api:dev": "pnpm --filter @diary/api dev",
+    "web:dev": "pnpm --filter @diary/web dev",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test"
+  }
+}
