@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { join } from "../../../../utils/join";
+import { join } from "../../../../helpers/join";
 
 type Props = {
   pending: boolean;

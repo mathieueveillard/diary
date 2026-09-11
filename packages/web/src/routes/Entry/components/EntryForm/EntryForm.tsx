@@ -1,6 +1,7 @@
 import type { EntryInput } from "@diary/api/types";
 import type { FC } from "react";
 import { useForm } from "react-hook-form";
+import { join } from "../../../../helpers/join";
 
 type Props = {
   content: string;
@@ -24,14 +25,26 @@ export const EntryForm: FC<Props> = ({ content, pending, onSubmit, onCancel }) =
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-violet-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-violet-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-950 disabled:opacity-50"
+          className={join([
+            pending ? "cursor-not-allowed" : "cursor-pointer",
+            "rounded-md",
+            "bg-violet-900 hover:bg-violet-800 transition-colors duration-[300ms] ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-950 disabled:opacity-50",
+            "px-3 py-1.5",
+            "text-sm font-medium text-white",
+          ])}
         >
           Save
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-md px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-950"
+          className={join([
+            "cursor-pointer",
+            "rounded-md",
+            "hover:bg-gray-100 transition-colors duration-[300ms] ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-950",
+            "px-3 py-1.5",
+            "text-sm font-medium text-gray-700",
+          ])}
         >
           Cancel
         </button>
