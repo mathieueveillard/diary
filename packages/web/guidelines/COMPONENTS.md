@@ -69,6 +69,32 @@ Placement belongs to the parent, never to the child. `BackToDiaryLink` renders t
 </div>
 ```
 
+#### Semantic HTML ownership
+
+Extraction stops at semantic boundaries. When a parent–child HTML element pair forms a single semantic structure (`<ul>` / `<li>`, `<table>` / `<tr>`, `<dl>` / `<dt>`), both elements must live in the same component, no exception. Splitting them creates an implicit contract — the child _must_ render an `<li>`, but nothing in its props says so.
+
+This does not exempt the row's content from the rule above: extract what sits _inside_ the semantic element, and let that child render a fragment that knows nothing of the list it sits in.
+
+```tsx
+// Good — List owns the list semantics, EntryHeadline owns the row's content
+<ul className="divide-y divide-gray-200">
+  {items.map(({ id, createdAt, content }) => (
+    <li key={id}>
+      <Link to={`/entries/${id}`} className="flex gap-4 py-3 hover:bg-gray-50">
+        <EntryHeadline createdAt={createdAt} title={extractTitle(content)} />
+      </Link>
+    </li>
+  ))}
+</ul>
+
+// Bad — semantic coupling split across components
+<ul>
+  {items.map((item) => (
+    <EntryListItem entry={item} />  {/* renders <li> internally — implicit contract */}
+  ))}
+</ul>
+```
+
 #### Naming
 
 Name a component after what it is in the UI, not after the state that renders it. Status components carry their route as a prefix (`EntryLoading`, `ListLoading`) because their copy is route-specific — "Entry not found." and "Failed to load entries." are not the same message. They stay route-local until a second route needs the exact same one, at which point the placement rule below moves them to `src/components/`.
@@ -126,31 +152,6 @@ src/routes/Entry/
     ├── EntryLoading/
     ├── EntryNotFound/
     └── EntryView/
-```
-
-### Semantic HTML ownership
-
-When a parent–child HTML element pair forms a single semantic structure (e.g. `<ul>` / `<li>`, `<table>` / `<tr>`, `<dl>` / `<dt>`), both elements must live in the same component. Do not split them across parent and child components — this creates implicit coupling where the child _must_ render a specific HTML element but nothing in its API enforces it. The child component should be purely visual and have no knowledge of the list/table context it sits in.
-
-```tsx
-// Good — List owns the full list semantics
-<ul>
-  {items.map(({ id, createdAt, content }) => (
-    <li key={id}>
-      <Link to={`/entries/${id}`}>
-        <time dateTime={createdAt}>{formatDateTime(createdAt)}</time>
-        <span>{extractTitle(content)}</span>
-      </Link>
-    </li>
-  ))}
-</ul>
-
-// Bad — semantic coupling split across components
-<ul>
-  {items.map((item) => (
-    <EntryListItem entry={item} />  {/* EntryListItem renders <li> internally — implicit contract */}
-  ))}
-</ul>
 ```
 
 ### Helper functions
