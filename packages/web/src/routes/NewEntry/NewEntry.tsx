@@ -2,7 +2,6 @@ import type { FC } from "react";
 import { Link, useNavigate } from "react-router";
 import { EntryForm } from "../../components/EntryForm";
 import { useCreateEntry } from "./api/use-create-entry";
-import { toIsoDate } from "./helpers/to-iso-date";
 
 export const NewEntry: FC = () => {
   const navigate = useNavigate();
@@ -17,7 +16,6 @@ export const NewEntry: FC = () => {
       </nav>
       <h1 className="mb-6 text-2xl font-semibold">New entry</h1>
       <EntryForm
-        date={toIsoDate(new Date())}
         title=""
         content=""
         pending={create.isPending}

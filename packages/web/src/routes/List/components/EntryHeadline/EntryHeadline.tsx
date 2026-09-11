@@ -1,15 +1,15 @@
 import type { FC } from "react";
-import { formatDate } from "./helpers/format-date";
+import { formatDateTime } from "../../../../helpers/format-date-time";
 
 type Props = {
-  date: string;
+  createdAt: string;
   title: string;
 };
 
-export const EntryHeadline: FC<Props> = ({ date, title }) => (
+export const EntryHeadline: FC<Props> = ({ createdAt, title }) => (
   <>
-    <time dateTime={date} className="shrink-0 text-gray-500 tabular-nums">
-      {formatDate(date)}
+    <time dateTime={createdAt} className="shrink-0 text-gray-500 tabular-nums">
+      {formatDateTime(createdAt)}
     </time>
     <span>{title || "Untitled"}</span>
   </>

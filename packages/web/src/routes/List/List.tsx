@@ -22,10 +22,10 @@ export const List: FC = () => {
       {status === "pending" && <p className="text-gray-500">Loading…</p>}
       {status === "error" && <p className="text-red-600">Failed to load entries.</p>}
       <ul className="divide-y divide-gray-200">
-        {items.map(({ id, date, title }) => (
+        {items.map(({ id, createdAt, title }) => (
           <li key={id}>
             <Link to={`/entries/${id}`} className="flex gap-4 py-3 hover:bg-gray-50">
-              <EntryHeadline date={date} title={title} />
+              <EntryHeadline createdAt={createdAt} title={title} />
             </Link>
           </li>
         ))}

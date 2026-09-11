@@ -68,10 +68,10 @@ When a parent–child HTML element pair forms a single semantic structure (e.g. 
 ```tsx
 // Good — List owns the full list semantics
 <ul>
-  {items.map(({ id, date, title }) => (
+  {items.map(({ id, createdAt, title }) => (
     <li key={id}>
       <Link to={`/entries/${id}`}>
-        <time dateTime={date}>{formatDate(date)}</time>
+        <time dateTime={createdAt}>{formatDateTime(createdAt)}</time>
         <span>{title}</span>
       </Link>
     </li>
@@ -94,12 +94,14 @@ When a component uses helper functions (formatters, mappers, predicates, etc.), 
 List/
 ├── List.tsx
 ├── helpers/
-│   ├── format-date.ts        ← one function per file
-│   └── format-date.test.ts   ← unit test next to the helper
+│   ├── format-title.ts       ← one function per file
+│   └── format-title.test.ts  ← unit test next to the helper
 └── index.ts
 ```
 
 Every helper must have a co-located `*.test.ts` file. Tests use Vitest (`import { expect, test } from "vitest"`) and follow the project-wide test style (`test(`, `// Given` / `// When` / `// Then` comments).
+
+A helper follows the same placement rule as a component: it only moves up to the shared `src/helpers/` folder once more than one route uses it (`format-date-time.ts` is shared by `List` and `Entry`).
 
 ### Law of Demeter for props
 
@@ -107,9 +109,9 @@ When a component receives data via props, pass only the specific values it needs
 
 ```tsx
 // Good — EntryView depends only on what it uses
-<EntryView date={entry.date} title={entry.title} content={entry.content} />
+<EntryView createdAt={entry.createdAt} title={entry.title} content={entry.content} />
 
-// Bad — EntryView receives the whole Entry but never reads entry.createdAt
+// Bad — EntryView receives the whole Entry but never reads entry.updatedAt
 <EntryView entry={entry} />
 ```
 

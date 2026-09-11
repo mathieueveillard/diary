@@ -3,7 +3,6 @@ import type { FC } from "react";
 import { useForm } from "react-hook-form";
 
 type Props = {
-  date: string;
   title: string;
   content: string;
   pending: boolean;
@@ -11,29 +10,17 @@ type Props = {
   onCancel: () => void;
 };
 
-export const EntryForm: FC<Props> = ({ date, title, content, pending, onSubmit, onCancel }) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<EntryInput>({ defaultValues: { date, title, content } });
+export const EntryForm: FC<Props> = ({ title, content, pending, onSubmit, onCancel }) => {
+  const { register, handleSubmit } = useForm<EntryInput>({ defaultValues: { title, content } });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
-      <div className="flex gap-4">
-        <input
-          type="date"
-          {...register("date", { required: true })}
-          className="rounded border border-gray-300 px-2 py-1"
-        />
-        <input
-          type="text"
-          {...register("title")}
-          placeholder="Title"
-          className="flex-1 rounded border border-gray-300 px-2 py-1"
-        />
-      </div>
-      {errors.date && <p className="text-sm text-red-600">A date is required.</p>}
+      <input
+        type="text"
+        {...register("title")}
+        placeholder="Title"
+        className="rounded border border-gray-300 px-2 py-1"
+      />
       <textarea
         {...register("content")}
         placeholder="Write in Markdown…"

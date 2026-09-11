@@ -3,18 +3,18 @@ import { parseEntryInput } from "./parse-entry-input";
 
 test("accepts a well-formed input and drops unknown fields", () => {
   // Given
-  const body = { date: "2026-09-09", title: "Hello", content: "# Hi", extra: true };
+  const body = { title: "Hello", content: "# Hi", extra: true };
 
   // When
   const input = parseEntryInput(body);
 
   // Then
-  expect(input).toEqual({ date: "2026-09-09", title: "Hello", content: "# Hi" });
+  expect(input).toEqual({ title: "Hello", content: "# Hi" });
 });
 
-test("rejects a date that is not YYYY-MM-DD", () => {
+test("rejects a missing content", () => {
   // Given
-  const body = { date: "09/09/2026", title: "", content: "" };
+  const body = { title: "Hello" };
 
   // When
   const input = parseEntryInput(body);
@@ -23,9 +23,9 @@ test("rejects a date that is not YYYY-MM-DD", () => {
   expect(input).toBeNull();
 });
 
-test("rejects a missing content", () => {
+test("rejects a body that is not an object", () => {
   // Given
-  const body = { date: "2026-09-09", title: "Hello" };
+  const body = "Hello";
 
   // When
   const input = parseEntryInput(body);
