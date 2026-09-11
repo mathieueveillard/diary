@@ -63,6 +63,8 @@ const updateEntryById = db.prepare(
   `UPDATE entries SET title = ?, content = ?, updated_at = ? WHERE id = ?`,
 );
 
+const deleteEntryById = db.prepare(`DELETE FROM entries WHERE id = ?`);
+
 export const listEntries = (cursor: string | null, limit: number): EntryPage => {
   const rows = (
     cursor ? selectPageAfter.all(cursor, limit + 1) : selectFirstPage.all(limit + 1)
@@ -87,4 +89,9 @@ export const updateEntry = (id: string, { title, content }: EntryInput): Entry |
   const now = new Date().toISOString();
   const { changes } = updateEntryById.run(title, content, now, id);
   return changes === 0 ? null : getEntry(id);
+};
+
+export const deleteEntry = (id: string): boolean => {
+  const { changes } = deleteEntryById.run(id);
+  return changes > 0;
 };

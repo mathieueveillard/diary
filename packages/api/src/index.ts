@@ -1,6 +1,6 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import { createEntry, getEntry, listEntries, updateEntry } from "./db";
+import { createEntry, deleteEntry, getEntry, listEntries, updateEntry } from "./db";
 import { parseEntryInput } from "./parse-entry-input";
 
 const PORT = 8787;
@@ -36,6 +36,10 @@ app.put("/api/entries/:id", async (c) => {
   const entry = updateEntry(c.req.param("id"), input);
   return entry ? c.json(entry) : c.json({ error: "Not found" }, 404);
 });
+
+app.delete("/api/entries/:id", (c) =>
+  deleteEntry(c.req.param("id")) ? c.body(null, 204) : c.json({ error: "Not found" }, 404),
+);
 
 serve({ fetch: app.fetch, port: PORT }, ({ port }) => {
   console.log(`API listening on http://localhost:${port}`);

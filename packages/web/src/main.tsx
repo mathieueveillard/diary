@@ -6,13 +6,11 @@ import { RouterProvider } from "react-router/dom";
 import "./index.css";
 import { Entry } from "./routes/Entry";
 import { List } from "./routes/List";
-import { NewEntry } from "./routes/NewEntry";
 
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   { path: "/", Component: List },
-  { path: "/entries/new", Component: NewEntry },
   { path: "/entries/:id", Component: Entry },
 ]);
 
