@@ -6,7 +6,7 @@ import { useUpdateEntry } from "./api/use-update-entry";
 import { EntryView } from "./components/EntryView";
 
 export const Entry: FC = () => {
-  const id = Number(useParams().id);
+  const { id = "" } = useParams();
   const { data: entry, status } = useEntry(id);
   const update = useUpdateEntry(id);
   const [editing, setEditing] = useState(false);
