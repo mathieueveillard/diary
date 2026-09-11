@@ -32,6 +32,11 @@ pnpm --filter @diary/web build
 
 Write all documentation (comments, README, etc.) in English.
 
+## Guidelines
+
+- [CODE-STYLE.md](./guidelines/CODE-STYLE.md) — naming, types, functions, formatting, immutability
+- [TEST-STYLE.md](./guidelines/TEST-STYLE.md) — test structure, fixtures, assertions
+
 ## Frontend conventions
 
 `packages/web/guidelines/COMPONENTS.md` is the component rulebook (template-based creation, placement under `src/routes/<Route>/` vs `src/components/`, semantic HTML ownership, one helper per file with a co-located test, Law of Demeter for props). Read it before adding or moving a component.

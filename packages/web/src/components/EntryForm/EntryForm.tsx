@@ -1,5 +1,6 @@
 import type { EntryInput } from "@diary/api/types";
-import { useState, type FC, type FormEvent } from "react";
+import type { FC } from "react";
+import { useForm } from "react-hook-form";
 
 type Props = {
   date: string;
@@ -10,44 +11,31 @@ type Props = {
   onCancel: () => void;
 };
 
-export const EntryForm: FC<Props> = ({
-  date: initialDate,
-  title: initialTitle,
-  content: initialContent,
-  pending,
-  onSubmit,
-  onCancel,
-}) => {
-  const [date, setDate] = useState(initialDate);
-  const [title, setTitle] = useState(initialTitle);
-  const [content, setContent] = useState(initialContent);
-
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    onSubmit({ date, title, content });
-  };
+export const EntryForm: FC<Props> = ({ date, title, content, pending, onSubmit, onCancel }) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<EntryInput>({ defaultValues: { date, title, content } });
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
       <div className="flex gap-4">
         <input
           type="date"
-          value={date}
-          onChange={(event) => setDate(event.target.value)}
-          required
+          {...register("date", { required: true })}
           className="rounded border border-gray-300 px-2 py-1"
         />
         <input
           type="text"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
+          {...register("title")}
           placeholder="Title"
           className="flex-1 rounded border border-gray-300 px-2 py-1"
         />
       </div>
+      {errors.date && <p className="text-sm text-red-600">A date is required.</p>}
       <textarea
-        value={content}
-        onChange={(event) => setContent(event.target.value)}
+        {...register("content")}
         placeholder="Write in Markdown…"
         rows={20}
         className="rounded border border-gray-300 p-2 font-mono text-sm"
