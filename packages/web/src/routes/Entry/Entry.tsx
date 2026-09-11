@@ -1,9 +1,14 @@
 import type { FC } from "react";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router";
+import { useNavigate, useParams, useSearchParams } from "react-router";
 import { useDeleteEntry } from "./api/use-delete-entry";
 import { useEntry } from "./api/use-entry";
 import { useUpdateEntry } from "./api/use-update-entry";
+import { BackToDiaryLink } from "./components/BackToDiaryLink";
+import { DeleteButton } from "./components/DeleteButton";
+import { EditButton } from "./components/EditButton";
 import { EntryForm } from "./components/EntryForm";
+import { EntryLoading } from "./components/EntryLoading";
+import { EntryNotFound } from "./components/EntryNotFound";
 import { EntryView } from "./components/EntryView";
 import { isBlankEntry } from "./helpers/is-blank-entry";
 
@@ -24,12 +29,10 @@ export const Entry: FC = () => {
   return (
     <main className="mx-auto max-w-2xl p-6">
       <nav className="mb-6">
-        <Link to="/" className="underline">
-          ← Back to diary
-        </Link>
+        <BackToDiaryLink />
       </nav>
-      {status === "pending" && <p className="text-gray-500">Loading…</p>}
-      {status === "error" && <p className="text-red-600">Entry not found.</p>}
+      {status === "pending" && <EntryLoading />}
+      {status === "error" && <EntryNotFound />}
       {entry && editing && (
         <EntryForm
           content={entry.content}
@@ -42,21 +45,8 @@ export const Entry: FC = () => {
         <>
           <EntryView createdAt={entry.createdAt} content={entry.content} />
           <div className="mt-6 flex gap-2">
-            <button
-              type="button"
-              onClick={() => setSearchParams("edit")}
-              className="rounded border border-gray-300 px-3 py-1"
-            >
-              Edit
-            </button>
-            <button
-              type="button"
-              disabled={remove.isPending}
-              onClick={discard}
-              className="rounded border border-gray-300 px-3 py-1 text-red-600 disabled:opacity-50"
-            >
-              Delete
-            </button>
+            <EditButton onClick={() => setSearchParams("edit")} />
+            <DeleteButton pending={remove.isPending} onClick={discard} />
           </div>
         </>
       )}
