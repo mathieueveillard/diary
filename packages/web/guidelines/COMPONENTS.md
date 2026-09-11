@@ -16,6 +16,63 @@ Entry/                     ← changes if the entry page layout changes
 └── (EntryForm)            ← changes if how an entry is edited changes
 ```
 
+#### What must be extracted
+
+Any JSX that carries its own presentation — an element with a label, its own Tailwind classes, or a fixed piece of copy — is a component, however small. Concretely:
+
+- every button (`EditButton`, `DeleteButton`, `NewEntryButton`)
+- every link with its own label (`BackToDiaryLink`)
+- every status message (`EntryLoading`, `EntryNotFound`, `ListError`)
+
+Size is not a criterion. A three-line `<button>` has its own reasons to change — its wording, its styling — and belongs in its own file. "It's only one line" is not a reason to inline it.
+
+#### What the parent keeps
+
+A route or parent component is left with only:
+
+- hooks and state (`useParams`, query/mutation hooks, derived values)
+- event handlers, passed down as `on*` props
+- layout and semantic container elements (`<main>`, `<nav>`, `<header>`, `<ul>`/`<li>`, spacing wrappers)
+- conditional rendering
+
+Placement belongs to the parent, never to the child. `BackToDiaryLink` renders the `<Link>` alone; the `<nav>` that positions it stays in `Entry.tsx`. It follows that a child never sets its own outer spacing — `mb-6`, `mt-6`, `gap-*` live on the parent's wrapper, so the same child can be placed anywhere.
+
+```tsx
+// Good — the route keeps placement and wiring, children own their presentation
+<nav className="mb-6">
+  <BackToDiaryLink />
+</nav>
+{status === "pending" && <EntryLoading />}
+{status === "error" && <EntryNotFound />}
+<div className="mt-6 flex gap-2">
+  <EditButton onClick={() => setSearchParams("edit")} />
+  <DeleteButton pending={remove.isPending} onClick={discard} />
+</div>
+
+// Bad — presentation inlined in the route
+<nav className="mb-6">
+  <Link to="/" className="underline">
+    ← Back to diary
+  </Link>
+</nav>
+{status === "pending" && <p className="text-gray-500">Loading…</p>}
+{status === "error" && <p className="text-red-600">Entry not found.</p>}
+<div className="mt-6 flex gap-2">
+  <button
+    type="button"
+    onClick={() => setSearchParams("edit")}
+    className="rounded border border-gray-300 px-3 py-1"
+  >
+    Edit
+  </button>
+  {/* … */}
+</div>
+```
+
+#### Naming
+
+Name a component after what it is in the UI, not after the state that renders it. Status components carry their route as a prefix (`EntryLoading`, `ListLoading`) because their copy is route-specific — "Entry not found." and "Failed to load entries." are not the same message. They stay route-local until a second route needs the exact same one, at which point the placement rule below moves them to `src/components/`.
+
 ### Component placement in the app
 
 Routes live in `src/routes/`, one folder per route, shaped exactly like a component (same template, same rules below). Nest components as close as possible to where they are used. A component that is only used by one route lives inside that route's `components/` folder. Only move a component up to `src/components/` when it is used by more than one route.
@@ -54,11 +111,21 @@ src/routes/Entry/
 ├── index.ts
 ├── api/
 │   ├── use-entry.ts
-│   └── use-update-entry.ts
+│   ├── use-update-entry.ts
+│   └── use-delete-entry.ts
+├── helpers/
+│   ├── is-blank-entry.ts
+│   └── is-blank-entry.test.ts
 └── components/
+    ├── BackToDiaryLink/
+    │   ├── BackToDiaryLink.tsx
+    │   └── index.ts
+    ├── DeleteButton/
+    ├── EditButton/
+    ├── EntryForm/
+    ├── EntryLoading/
+    ├── EntryNotFound/
     └── EntryView/
-        ├── EntryView.tsx
-        └── index.ts
 ```
 
 ### Semantic HTML ownership
