@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { useCreateEntry } from "./api/use-create-entry";
 import { useEntries } from "./api/use-entries";
 import { EntryHeadline } from "./components/EntryHeadline";
@@ -13,7 +13,8 @@ import { useRestoreScrollPosition } from "./hooks/use-restore-scroll-position";
 export const List: FC = () => {
   const navigate = useNavigate();
   const create = useCreateEntry();
-  const { data, status, fetchNextPage, hasNextPage, isFetchingNextPage } = useEntries();
+  const { data, status, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useEntries();
   useRestoreScrollPosition(status === "success");
 
   const items = data?.pages.flatMap((page) => page.items) ?? [];
@@ -27,7 +28,10 @@ export const List: FC = () => {
           onClick={() =>
             create.mutate(
               { content: "" },
-              { onSuccess: (entry) => void navigate(`/entries/${entry.id}?edit`) },
+              {
+                onSuccess: (entry) =>
+                  void navigate(`/entries/${entry.id}?edit`),
+              },
             )
           }
         />
@@ -37,13 +41,20 @@ export const List: FC = () => {
       <ul className="divide-y divide-gray-200">
         {items.map(({ id, createdAt, content }) => (
           <li key={id}>
-            <Link to={`/entries/${id}`} className="flex gap-4 py-3 hover:bg-gray-50">
-              <EntryHeadline createdAt={createdAt} title={extractTitle(content)} />
-            </Link>
+            <EntryHeadline
+              id={id}
+              createdAt={createdAt}
+              title={extractTitle(content)}
+            />
           </li>
         ))}
       </ul>
-      {hasNextPage && <LoadMoreSentinel onVisible={fetchNextPage} disabled={isFetchingNextPage} />}
+      {hasNextPage && (
+        <LoadMoreSentinel
+          onVisible={fetchNextPage}
+          disabled={isFetchingNextPage}
+        />
+      )}
     </main>
   );
 };
