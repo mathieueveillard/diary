@@ -27,7 +27,7 @@ export const List: FC = () => {
               { onSuccess: (entry) => void navigate(`/entries/${entry.id}?edit`) },
             )
           }
-          className="underline disabled:opacity-50"
+          className="rounded-md bg-violet-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-violet-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-950 disabled:opacity-50"
         >
           New entry
         </button>
