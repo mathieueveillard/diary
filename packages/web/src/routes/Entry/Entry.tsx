@@ -32,7 +32,6 @@ export const Entry: FC = () => {
       {status === "error" && <p className="text-red-600">Entry not found.</p>}
       {entry && editing && (
         <EntryForm
-          title={entry.title}
           content={entry.content}
           pending={update.isPending}
           onSubmit={(input) => update.mutate(input, { onSuccess: read })}
@@ -41,7 +40,7 @@ export const Entry: FC = () => {
       )}
       {entry && !editing && (
         <>
-          <EntryView createdAt={entry.createdAt} title={entry.title} content={entry.content} />
+          <EntryView createdAt={entry.createdAt} content={entry.content} />
           <div className="mt-6 flex gap-2">
             <button
               type="button"

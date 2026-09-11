@@ -1,35 +1,26 @@
 import { expect, test } from "vitest";
 import { isBlankEntry } from "./is-blank-entry";
 
-test("considers an entry with neither title nor content blank", () => {
+test("considers an entry without content blank", () => {
   // Given
-  const entry = { title: "", content: "" };
+  const entry = { content: "" };
 
-  // When
-  const blank = isBlankEntry(entry);
-
-  // Then
-  expect(blank).toBe(true);
+  // When & Then
+  expect(isBlankEntry(entry)).toBe(true);
 });
 
 test("considers an entry with only a title non-blank", () => {
   // Given
-  const entry = { title: "A quiet Sunday", content: "" };
+  const entry = { content: "# A quiet Sunday" };
 
-  // When
-  const blank = isBlankEntry(entry);
-
-  // Then
-  expect(blank).toBe(false);
+  // When & Then
+  expect(isBlankEntry(entry)).toBe(false);
 });
 
-test("considers an entry with only content non-blank", () => {
+test("considers an entry with content non-blank", () => {
   // Given
-  const entry = { title: "", content: "The garden is finally awake." };
+  const entry = { content: "The garden is finally awake." };
 
-  // When
-  const blank = isBlankEntry(entry);
-
-  // Then
-  expect(blank).toBe(false);
+  // When & Then
+  expect(isBlankEntry(entry)).toBe(false);
 });

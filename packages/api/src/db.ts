@@ -14,18 +14,17 @@ db.exec(`
 
   CREATE TABLE IF NOT EXISTS entries (
     id         TEXT PRIMARY KEY,
-    title      TEXT NOT NULL DEFAULT '',
     content    TEXT NOT NULL DEFAULT '',
     created_at TEXT NOT NULL UNIQUE,
     updated_at TEXT NOT NULL
   );
 
   CREATE VIRTUAL TABLE IF NOT EXISTS entries_fts USING fts5(
-    id UNINDEXED, title, content
+    id UNINDEXED, content
   );
 
   CREATE TRIGGER IF NOT EXISTS entries_ai AFTER INSERT ON entries BEGIN
-    INSERT INTO entries_fts(id, title, content) VALUES (new.id, new.title, new.content);
+    INSERT INTO entries_fts(id, content) VALUES (new.id, new.content);
   END;
 
   CREATE TRIGGER IF NOT EXISTS entries_ad AFTER DELETE ON entries BEGIN
@@ -33,14 +32,13 @@ db.exec(`
   END;
 
   CREATE TRIGGER IF NOT EXISTS entries_au AFTER UPDATE ON entries BEGIN
-    UPDATE entries_fts SET title = new.title, content = new.content WHERE id = new.id;
+    UPDATE entries_fts SET content = new.content WHERE id = new.id;
   END;
 `);
 
-const ENTRY_COLUMNS =
-  "id, title, content, created_at AS createdAt, updated_at AS updatedAt";
+const ENTRY_COLUMNS = "id, content, created_at AS createdAt, updated_at AS updatedAt";
 
-const SUMMARY_COLUMNS = "id, title, created_at AS createdAt";
+const SUMMARY_COLUMNS = "id, content, created_at AS createdAt";
 
 const selectEntry = db.prepare(`SELECT ${ENTRY_COLUMNS} FROM entries WHERE id = ?`);
 
@@ -55,12 +53,12 @@ const selectPageAfter = db.prepare(
 );
 
 const insertEntry = db.prepare(
-  `INSERT INTO entries (id, title, content, created_at, updated_at)
-   VALUES (?, ?, ?, ?, ?)`,
+  `INSERT INTO entries (id, content, created_at, updated_at)
+   VALUES (?, ?, ?, ?)`,
 );
 
 const updateEntryById = db.prepare(
-  `UPDATE entries SET title = ?, content = ?, updated_at = ? WHERE id = ?`,
+  `UPDATE entries SET content = ?, updated_at = ? WHERE id = ?`,
 );
 
 const deleteEntryById = db.prepare(`DELETE FROM entries WHERE id = ?`);
@@ -78,16 +76,16 @@ export const listEntries = (cursor: string | null, limit: number): EntryPage => 
 export const getEntry = (id: string): Entry | null =>
   (selectEntry.get(id) as Entry | undefined) ?? null;
 
-export const createEntry = ({ title, content }: EntryInput): Entry => {
+export const createEntry = ({ content }: EntryInput): Entry => {
   const id = randomUUIDv7();
   const now = new Date().toISOString();
-  insertEntry.run(id, title, content, now, now);
+  insertEntry.run(id, content, now, now);
   return getEntry(id)!;
 };
 
-export const updateEntry = (id: string, { title, content }: EntryInput): Entry | null => {
+export const updateEntry = (id: string, { content }: EntryInput): Entry | null => {
   const now = new Date().toISOString();
-  const { changes } = updateEntryById.run(title, content, now, id);
+  const { changes } = updateEntryById.run(content, now, id);
   return changes === 0 ? null : getEntry(id);
 };
 

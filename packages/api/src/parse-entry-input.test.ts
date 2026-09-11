@@ -3,18 +3,18 @@ import { parseEntryInput } from "./parse-entry-input";
 
 test("accepts a well-formed input and drops unknown fields", () => {
   // Given
-  const body = { title: "Hello", content: "# Hi", extra: true };
+  const body = { content: "# Hi", extra: true };
 
   // When
   const input = parseEntryInput(body);
 
   // Then
-  expect(input).toEqual({ title: "Hello", content: "# Hi" });
+  expect(input).toEqual({ content: "# Hi" });
 });
 
 test("rejects a missing content", () => {
   // Given
-  const body = { title: "Hello" };
+  const body = { createdAt: "2026-09-11T08:00:00.000Z" };
 
   // When
   const input = parseEntryInput(body);

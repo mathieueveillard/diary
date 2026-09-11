@@ -68,11 +68,11 @@ When a parent–child HTML element pair forms a single semantic structure (e.g. 
 ```tsx
 // Good — List owns the full list semantics
 <ul>
-  {items.map(({ id, createdAt, title }) => (
+  {items.map(({ id, createdAt, content }) => (
     <li key={id}>
       <Link to={`/entries/${id}`}>
         <time dateTime={createdAt}>{formatDateTime(createdAt)}</time>
-        <span>{title}</span>
+        <span>{extractTitle(content)}</span>
       </Link>
     </li>
   ))}
@@ -94,8 +94,8 @@ When a component uses helper functions (formatters, mappers, predicates, etc.), 
 List/
 ├── List.tsx
 ├── helpers/
-│   ├── format-title.ts       ← one function per file
-│   └── format-title.test.ts  ← unit test next to the helper
+│   ├── extract-title.ts       ← one function per file
+│   └── extract-title.test.ts  ← unit test next to the helper
 └── index.ts
 ```
 
@@ -109,7 +109,7 @@ When a component receives data via props, pass only the specific values it needs
 
 ```tsx
 // Good — EntryView depends only on what it uses
-<EntryView createdAt={entry.createdAt} title={entry.title} content={entry.content} />
+<EntryView createdAt={entry.createdAt} content={entry.content} />
 
 // Bad — EntryView receives the whole Entry but never reads entry.updatedAt
 <EntryView entry={entry} />

@@ -4,6 +4,7 @@ import { useCreateEntry } from "./api/use-create-entry";
 import { useEntries } from "./api/use-entries";
 import { EntryHeadline } from "./components/EntryHeadline";
 import { LoadMoreSentinel } from "./components/LoadMoreSentinel";
+import { extractTitle } from "./helpers/extract-title";
 import { useRestoreScrollPosition } from "./hooks/use-restore-scroll-position";
 
 export const List: FC = () => {
@@ -23,7 +24,7 @@ export const List: FC = () => {
           disabled={create.isPending}
           onClick={() =>
             create.mutate(
-              { title: "", content: "" },
+              { content: "" },
               { onSuccess: (entry) => void navigate(`/entries/${entry.id}?edit`) },
             )
           }
@@ -35,10 +36,10 @@ export const List: FC = () => {
       {status === "pending" && <p className="text-gray-500">Loading…</p>}
       {status === "error" && <p className="text-red-600">Failed to load entries.</p>}
       <ul className="divide-y divide-gray-200">
-        {items.map(({ id, createdAt, title }) => (
+        {items.map(({ id, createdAt, content }) => (
           <li key={id}>
             <Link to={`/entries/${id}`} className="flex gap-4 py-3 hover:bg-gray-50">
-              <EntryHeadline createdAt={createdAt} title={title} />
+              <EntryHeadline createdAt={createdAt} title={extractTitle(content)} />
             </Link>
           </li>
         ))}

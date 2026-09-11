@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-A personal diary web app, intended to be run locally (`localhost`) by its developer/user â not deployed for public/multi-user access. There is no auth or hosting concern to design around; treat it as a single-user local tool. Entries are written in Markdown.
+A personal diary web app, intended to be run locally (`localhost`) by its developer/user â not deployed for public/multi-user access. There is no auth or hosting concern to design around; treat it as a single-user local tool. Entries are written in Markdown and have no title field of their own: the list derives a headline from the first `# Heading` in the content (`packages/web/src/routes/List/helpers/extract-title.ts`).
 
 ## Workspace
 
@@ -45,4 +45,4 @@ Write all documentation (comments, README, etc.) in English.
 
 - **Pagination is keyset-based.** `GET /api/entries?limit=&cursor=` orders by `created_at DESC`; the cursor is the `createdAt` of the last item, passed through as-is. Do not switch to offset pagination — entries inserted while the user scrolls would shift the page boundary and duplicate rows across pages. `created_at` is `UNIQUE`, which is what lets it be the sort key on its own.
 - **Scroll restoration on the list is deliberate.** `useEntries` sets a `staleTime` so the cached pages are reused when navigating back from an entry, and `useRestoreScrollPosition` restores `scrollY` once the data is rendered. React Router's `<ScrollRestoration>` is intentionally not used; it would reset the list to the top before its data is there.
-- **Full-text search is prepared, not implemented.** The FTS5 table `entries_fts` and its sync triggers already exist so a search endpoint can be added without a migration. It is a standalone table (`id UNINDEXED, title, content`), not an external-content one: FTS5 external content requires an integer rowid, which a UUID id cannot provide. A search endpoint joins `entries e ON e.id = f.id`. Markdown is stored raw; FTS5's tokenizer treats Markdown punctuation as separators, so nothing needs stripping.
+- **Full-text search is prepared, not implemented.** The FTS5 table `entries_fts` and its sync triggers already exist so a search endpoint can be added without a migration. It is a standalone table (`id UNINDEXED, content`), not an external-content one: FTS5 external content requires an integer rowid, which a UUID id cannot provide. A search endpoint joins `entries e ON e.id = f.id`. Markdown is stored raw; FTS5's tokenizer treats Markdown punctuation as separators, so nothing needs stripping.
